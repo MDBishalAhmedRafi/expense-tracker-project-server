@@ -79,23 +79,32 @@ app.post("/expenses", async (req, res) => {
 app.patch("/expenses/:id", async (req, res) => {
   const { id } = req.params;
   const { title, amount, category, date } = req.body;
+  console.log("this is id", id)
 
+  // Validation
   if (!title || title.length < 3) return res.status(400).json({ error: "Title invalid" });
   if (!amount || amount <= 0) return res.status(400).json({ error: "Amount invalid" });
   if (!date) return res.status(400).json({ error: "Date required" });
 
-  const expensesCollection = client.db("expenseDB").collection("expenses");
+  const expensesCollection = client.db("expenseTracker").collection("expenses");
 
   try {
+    // ✅ Convert string id to ObjectId
+    const objectId = new ObjectId(id);
+    console.log("object ID", objectId);
+    
     const result = await expensesCollection.updateOne(
-      { _id: new ObjectId(id) },  // <-- must convert string to ObjectId
+      { _id: objectId },
       { $set: { title, amount, category, date } }
     );
-
-    if (result.matchedCount === 0) return res.status(404).json({ error: "Expense not found" });
+    console.log("result", result);
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Expense not found" });
+    }
 
     res.json({ message: "Expense updated successfully" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
