@@ -27,9 +27,9 @@ async function run() {
     await client.connect();
     const db = client.db("expenseTracker"); // Database name
     expensesCollection = db.collection("expenses"); // Collection name
-    console.log("✅ MongoDB Connected");
+    console.log("MongoDB Connected");
   } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err);
+    console.error("MongoDB Connection Error:", err);
   }
 }
 run().catch(console.dir);
