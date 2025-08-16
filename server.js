@@ -46,6 +46,21 @@ app.get("/expenses", async (req, res) => {
   }
 });
 
+// GET /expenses?category=Food&start=2025-08-01&end=2025-08-15
+app.get("/expenses", async (req, res) => {
+  const { category, start, end } = req.query;
+  const filter = {};
+
+  if (category) filter.category = category;
+  if (start || end) filter.date = {};
+  if (start) filter.date.$gte = new Date(start);
+  if (end) filter.date.$lte = new Date(end);
+
+  const expenses = await Expense.find(filter).sort({ date: -1 });
+  res.json(expenses);
+});
+
+
 // POST new expense
 app.post("/expenses", async (req, res) => {
   try {
